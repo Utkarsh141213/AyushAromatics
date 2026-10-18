@@ -7,8 +7,10 @@ import useQuote from "../hooks/useQuote";
 export function Brand() {
   return (
     <a className="brand" href="#" aria-label={`${business.name} home`}>
-      <img src={business.logo} width="80" height="80" alt="" />
-      <span>
+      <span className="brand-logo" aria-hidden="true">
+        <img src={business.logo} width="120" height="120" alt="" />
+      </span>
+      <span className="brand-copy">
         {business.name}
         <small>Natural Ingredients. Trusted Partnerships.</small>
       </span>
