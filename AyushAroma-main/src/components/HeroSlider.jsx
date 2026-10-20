@@ -71,15 +71,12 @@ function SlideImage({ slide, initial = false, panel = false }) {
 }
 export default function HeroSlider() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
   const [reduced, setReduced] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
   const [hidden, setHidden] = useState(document.hidden);
   const touch = useRef(null);
-  const autoplay = !paused && !hovered && !focused && !reduced && !hidden;
+  const autoplay = !reduced && !hidden;
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const motion = () => setReduced(media.matches);
@@ -100,7 +97,6 @@ export default function HeroSlider() {
     return () => window.clearInterval(timer);
   }, [autoplay]);
   function go(index) {
-    setPaused(true);
     setActive((index + slides.length) % slides.length);
   }
   function keydown(e) {
@@ -115,12 +111,6 @@ export default function HeroSlider() {
       aria-roledescription="carousel"
       aria-label="Our products and bulk supply"
       onKeyDown={keydown}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocusCapture={() => setFocused(true)}
-      onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
-      }}
       onTouchStart={(e) => {
         touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }}
@@ -207,16 +197,6 @@ export default function HeroSlider() {
             aria-label="Previous slide"
           >
             <Icon name="left" />
-          </button>
-          <button
-            className="icon-button"
-            onClick={() => setPaused((p) => !p)}
-            aria-label={
-              paused || reduced ? "Start slideshow" : "Pause slideshow"
-            }
-            disabled={reduced}
-          >
-            <Icon name={paused || reduced ? "play" : "pause"} />
           </button>
           <button
             className="icon-button"
