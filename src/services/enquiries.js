@@ -1,5 +1,5 @@
 ﻿import emailjs from "@emailjs/browser";
-import { business } from "../config/business";
+import { emailHref } from "../config/business";
 const config = {
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
   templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
@@ -41,7 +41,7 @@ export function enquiryMessage(form) {
     .join("\n");
 }
 export function enquiryEmailHref(form) {
-  return `mailto:${business.email}?subject=${encodeURIComponent(`Bulk enquiry: ${form.product || "Product requirements"}`)}&body=${encodeURIComponent(`Name: ${form.name || ""}\nCompany: ${form.company || ""}\nEmail: ${form.email || ""}\n${enquiryMessage(form)}`)}`;
+  return `${emailHref}?subject=${encodeURIComponent(`Bulk enquiry: ${form.product || "Product requirements"}`)}&body=${encodeURIComponent(`Name: ${form.name || ""}\nCompany: ${form.company || ""}\nEmail: ${form.email || ""}\n${enquiryMessage(form)}`)}`;
 }
 // Provider adapter: replace this function when a server-owned enquiry endpoint is available.
 // A result is 'sent' only after EmailJS acknowledges the actual request.

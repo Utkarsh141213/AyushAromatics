@@ -60,13 +60,26 @@ export default function App() {
     name: business.name,
     url: business.siteUrl,
     logo: business.logo,
-    email: business.email,
-    telephone: business.phone,
+    email: business.emails,
+    telephone: business.phones,
     address: {
       "@type": "PostalAddress",
+      streetAddress: business.streetAddress,
       addressLocality: business.locality,
       addressRegion: business.region,
       addressCountry: "IN",
+    },
+    location: {
+      "@type": "Place",
+      name: "Corporate office",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: business.corporateAddress.streetAddress,
+        addressLocality: business.corporateAddress.locality,
+        addressRegion: business.corporateAddress.region,
+        postalCode: business.corporateAddress.postalCode,
+        addressCountry: "IN",
+      },
     },
     ...(business.socials.length
       ? { sameAs: business.socials.map((s) => s.url) }

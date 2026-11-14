@@ -1,6 +1,7 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 import { business, emailHref } from "../config/business";
+import EmailLinks from "./EmailLinks";
 import {
   isEnquiryConnected,
   validateEnquiry,
@@ -313,7 +314,7 @@ export default function QuoteModal({ request, onClose }) {
             {connected
               ? "Your details are used to respond to this business enquiry."
               : "Preparing a draft does not send an enquiry."}{" "}
-            You can also <a href={emailHref}>email {business.email}</a>.
+            You can also email <EmailLinks />.
           </p>
         </form>
       )}

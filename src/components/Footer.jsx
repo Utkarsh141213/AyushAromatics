@@ -1,12 +1,12 @@
 ﻿import {
   business,
   emailHref,
-  phoneHref,
   whatsappHref,
 } from "../config/business";
 import { categories, categoryPath } from "../data/catalogue";
 import { Brand, SocialLinks } from "./Header";
 import Icon from "./Icon";
+import { phoneLink } from "../config/phones";
 export function FloatingContact() {
   return (
     <aside className="floating-contact" aria-label="Quick contact">
@@ -24,10 +24,12 @@ export function FloatingContact() {
         <Icon name="mail" />
         <span>Email us</span>
       </a>
-      <a href={phoneHref} aria-label="Call Ayush Aromatics">
-        <Icon name="phone" />
-        <span>Call now</span>
-      </a>
+      {business.phones.map((phone) => (
+        <a key={phone} href={phoneLink(phone)} aria-label={`Call Ayush Aromatics at ${phone}`}>
+          <Icon name="phone" />
+          <span>{phone}</span>
+        </a>
+      ))}
     </aside>
   );
 }
@@ -64,12 +66,29 @@ export default function Footer() {
           </div>
           <div className="footer-contact">
             <h3>Let’s connect</h3>
-            <a href={emailHref}>{business.email}</a>
-            <a href={phoneHref}>{business.phone}</a>
+            {business.emails.map((email) => (
+              <a key={email} href={`mailto:${email}`}>{email}</a>
+            ))}
+            {business.phones.map((phone) => (
+              <a key={phone} href={phoneLink(phone)}>{phone}</a>
+            ))}
             <p>
+              <strong>Address</strong>
+              <br />
+              {business.streetAddress}
+              <br />
               {business.locality}
               <br />
               {business.region}, India
+            </p>
+            <p>
+              <strong>Corporate address</strong>
+              <br />
+              {business.corporateAddress.streetAddress}
+              <br />
+              {business.corporateAddress.locality}, {business.corporateAddress.region}
+              <br />
+              {business.corporateAddress.postalCode}, India
             </p>
           </div>
         </div>

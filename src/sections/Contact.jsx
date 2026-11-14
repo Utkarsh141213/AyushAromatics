@@ -4,8 +4,10 @@ import {
   submitEnquiry,
   enquiryEmailHref,
 } from "../services/enquiries";
-import { business, emailHref, phoneHref } from "../config/business";
+import { business, emailHref } from "../config/business";
+import { phoneLink } from "../config/phones";
 import Icon from "../components/Icon";
+import EmailLinks from "../components/EmailLinks";
 const empty = {
   name: "",
   company: "",
@@ -58,31 +60,50 @@ export default function Contact({ selectedProduct = "" }) {
             <a className="button button-gold" href="#enquiry-form">
               Request a quote <Icon name="arrow" />
             </a>
-            <a className="button button-outline-light" href={phoneHref}>
-              <Icon name="phone" />
-              Call now
-            </a>
+            {business.phones.map((phone) => (
+              <a key={phone} className="button button-outline-light" href={phoneLink(phone)}>
+                <Icon name="phone" />
+                Call {phone}
+              </a>
+            ))}
           </div>
           <div className="contact-details">
-            <a href={emailHref}>
+            <div>
               <Icon name="mail" />
-              <span>
+              <div className="contact-values">
                 <small>EMAIL US</small>
-                {business.email}
-              </span>
-            </a>
-            <a href={phoneHref}>
+                {business.emails.map((email) => (
+                  <a key={email} href={`mailto:${email}`}>{email}</a>
+                ))}
+              </div>
+            </div>
+            <div>
               <Icon name="phone" />
-              <span>
+              <div className="contact-values">
                 <small>CALL OUR TEAM</small>
-                {business.phone}
-              </span>
-            </a>
+                {business.phones.map((phone) => (
+                  <a key={phone} href={phoneLink(phone)}>{phone}</a>
+                ))}
+              </div>
+            </div>
             <div>
               <Icon name="pin" />
               <span>
-                <small>BASED IN INDIA</small>
+                <small>ADDRESS</small>
+                {business.streetAddress}
+                <br />
                 {business.locality}, {business.region}
+                , India
+              </span>
+            </div>
+            <div>
+              <Icon name="pin" />
+              <span>
+                <small>CORPORATE ADDRESS</small>
+                {business.corporateAddress.streetAddress}
+                <br />
+                {business.corporateAddress.locality}, {business.corporateAddress.region}
+                {" – "}{business.corporateAddress.postalCode}, India
               </span>
             </div>
           </div>
@@ -164,7 +185,7 @@ export default function Contact({ selectedProduct = "" }) {
             {status === "email" && (
               <>
                 Your email draft has been prepared. Send it from your email app,
-                or email <a href={emailHref}>{business.email}</a> directly.
+                or email <EmailLinks /> directly.
               </>
             )}
             {status === "error" && (

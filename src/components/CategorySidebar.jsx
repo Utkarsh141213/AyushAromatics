@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import { categories, allProducts, categoryPath } from "../data/catalogue";
-import { phoneHref, business } from "../config/business";
+import { business } from "../config/business";
+import { phoneLink } from "../config/phones";
 import Icon from "./Icon";
 function CategoryGroup({ category, currentCategory, currentProduct }) {
   const [expanded, setExpanded] = useState(
@@ -129,10 +130,12 @@ export default function CategorySidebar({ category = null, product = null }) {
             <Icon name="chat" />
             <h3>Need help sourcing?</h3>
             <p>Talk to our team about your product specification.</p>
-            <a href={phoneHref}>
-              <Icon name="phone" />
-              {business.phone}
-            </a>
+            {business.phones.map((phone) => (
+              <a key={phone} href={phoneLink(phone)}>
+                <Icon name="phone" />
+                {phone}
+              </a>
+            ))}
           </div>
         </div>
       </div>

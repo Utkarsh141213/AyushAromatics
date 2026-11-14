@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { business, emailHref, phoneHref } from "../config/business";
+import { business } from "../config/business";
+import { phoneLink } from "../config/phones";
 import { categories, categoryPath } from "../data/catalogue";
 import Icon from "./Icon";
 import useQuote from "../hooks/useQuote";
@@ -79,17 +80,20 @@ export default function Header({ quoteProduct = null }) {
       <div className="utility">
         <div className="container utility-inner">
           <div>
-            <a href={emailHref}>
-              <Icon name="mail" />
-              {business.email}
-            </a>
-            <a href={phoneHref}>
-              <Icon name="phone" />
-              {business.phone}
-            </a>
+            {business.emails.map((email) => (
+              <a key={email} href={`mailto:${email}`}>
+                <Icon name="mail" />
+                {email}
+              </a>
+            ))}
+            {business.phones.map((phone) => (
+              <a key={phone} href={phoneLink(phone)}>
+                <Icon name="phone" />
+                {phone}
+              </a>
+            ))}
           </div>
           <div className="utility-right">
-            <span>Bulk enquiries · India & international buyers</span>
             <SocialLinks />
           </div>
         </div>

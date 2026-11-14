@@ -1,5 +1,9 @@
 // Defaults verified against ayusharomatics.com on 18 October 2026.
+import { getContactEmails } from "./emails";
+import { getContactPhones, phoneLink } from "./phones";
 const env = import.meta.env;
+const emails = getContactEmails(env);
+const phones = getContactPhones(env);
 function officialUrl(value) {
   if (!value) return "";
   try {
@@ -11,10 +15,19 @@ function officialUrl(value) {
 }
 export const business = {
   name: env.VITE_COMPANY_NAME || "Ayush Aromatics",
-  phone: env.VITE_CONTACT_NUMBER || "+918267000606",
-  email: env.VITE_CONTACT_EMAIL || "info@ayusharomatics.com",
-  locality: env.VITE_COMPANY_LOCALITY || "Koharapeer, Bareilly",
+  phone: phones[0],
+  phones,
+  email: emails[0],
+  emails,
+  streetAddress: env.VITE_COMPANY_STREET_ADDRESS || "Plot No.- 156, Ground Floor, Village Khajuria",
+  locality: env.VITE_COMPANY_LOCALITY || "Bareilly",
   region: env.VITE_COMPANY_REGION || "Uttar Pradesh",
+  corporateAddress: {
+    streetAddress: env.VITE_CORPORATE_STREET_ADDRESS || "A-1 2604, Puranik Rumah Bali",
+    locality: env.VITE_CORPORATE_LOCALITY || "Thane",
+    region: env.VITE_CORPORATE_REGION || "Maharashtra",
+    postalCode: env.VITE_CORPORATE_POSTAL_CODE || "400615",
+  },
   siteUrl: officialUrl(env.VITE_SITE_URL) || "https://www.ayusharomatics.com/",
   logo:
     env.VITE_LOGO_URL ||
@@ -39,8 +52,8 @@ export const business = {
   privacyUrl: officialUrl(env.VITE_PRIVACY_URL),
   termsUrl: officialUrl(env.VITE_TERMS_URL),
 };
-export const phoneHref = `tel:${business.phone.replace(/[^+\d]/g, "")}`;
-export const emailHref = `mailto:${business.email}`;
+export const phoneHref = phoneLink(business.phone);
+export const emailHref = `mailto:${business.emails.join(",")}`;
 export function whatsappHref(
   message = `Hello ${business.name}, I would like to enquire about bulk oils and ingredients.`,
 ) {
