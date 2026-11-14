@@ -1,5 +1,5 @@
 ﻿// Editorial category copy describes the existing catalogue, not a universal grade or process.
-import approvedProductContent from "./approvedProductContent.json";
+import approvedProductContent from "./approvedProductContent.json" with { type: "json" };
 // No subcategories are present in the supplied catalogue; add only approved records.
 export const categoryContent = [
   {

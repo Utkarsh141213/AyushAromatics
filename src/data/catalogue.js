@@ -10,7 +10,7 @@ export function slugify(value) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
-export const categories = PRODUCTS.map((c, index) => ({
+export let categories = PRODUCTS.map((c, index) => ({
   ...c,
   index,
   slug: slugify(c.category),
@@ -25,7 +25,7 @@ export function categoryPath(category) {
       : categories.find((c) => c.category === category || c.slug === category);
   return entry ? `#/products/${entry.slug}` : "#products";
 }
-export const allProducts = categories.flatMap((c) =>
+export let allProducts = categories.flatMap((c) =>
   c.items.map((p, index) => ({
     ...p,
     id: `c${c.index}-${index}`,
@@ -39,7 +39,7 @@ export const allProducts = categories.flatMap((c) =>
     path: `#/products/${c.slug}/${slugify(p.title)}`,
   })),
 );
-export const popularProducts = [
+export let popularProducts = [
   "Menthol Crystals",
   "Mentha Arvensis Oil",
   "Lavender Oil",
@@ -49,8 +49,26 @@ export const popularProducts = [
 ]
   .map((title) => allProducts.find((p) => p.title === title))
   .filter(Boolean);
+export function applyCatalogue(data) {
+  categories = data.categories.map((c, index) => ({
+    ...c, index, image: c.image || images[c.order % images.length], subcategories: [],
+    content: { summary: "", overview: "", sourcing: "", materials: "", methods: "", applications: [], ...c.content },
+    items: data.products.filter(p => p.categoryId === c.id),
+  }));
+  allProducts = data.products.flatMap(p => {
+    const c = categories.find(c => c.id === p.categoryId);
+    if (!c) return [];
+    const defaults = createProductContent(p);
+    return [{ ...p, category: c.category, categoryIndex: c.index, categorySlug: c.slug,
+      image: p.content?.gallery?.[0]?.src || c.image,
+      content: { ...defaults, ...p.content, specifications: { ...defaults.specifications, ...p.content?.specifications }, packaging: { ...defaults.packaging, ...p.content?.packaging } },
+      legacyPath: `#/product/${p.legacyId || p.id}`, path: `#/products/${c.slug}/${p.slug}`,
+    }];
+  });
+  popularProducts = allProducts.filter(p => p.featured);
+}
 export function resolveProduct(id) {
-  const exact = allProducts.find((p) => p.id === id || p.path === `#${id}`);
+  const exact = allProducts.find((p) => p.id === id || p.legacyId === id || p.path === `#${id}`);
   if (exact) return exact;
   const match = /^c(\d+)-(.+)$/.exec(id || "");
   if (!match) return null;
@@ -62,7 +80,7 @@ export function resolveProduct(id) {
   }
   return (
     allProducts.find(
-      (p) => p.categoryIndex === Number(match[1]) && p.num === code,
+      (p) => (p.legacyId ? p.legacyId.split("-")[0] === `c${Number(match[1])}` : p.categoryIndex === Number(match[1])) && p.num === code,
     ) || null
   );
 }
@@ -79,7 +97,7 @@ export function resolveBrowseRoute(key, query = "") {
   if (key === "/products") return { type: "listing", category: null };
   if (key.startsWith("/products/")) {
     const parts = key.split("/").filter(Boolean);
-    const category = categories.find((c) => c.slug === parts[1]);
+    const category = categories.find((c) => c.slug === parts[1] || c.aliases?.includes(parts[1]));
     if (parts.length === 2)
       return category ? { type: "listing", category } : { type: "missing" };
     if (parts.length === 3)
@@ -87,7 +105,7 @@ export function resolveBrowseRoute(key, query = "") {
         type: "product",
         product:
           allProducts.find(
-            (p) => p.categorySlug === parts[1] && p.slug === parts[2],
+            (p) => p.pathAliases?.includes(`${parts[1]}/${parts[2]}`) || ((p.categorySlug === parts[1] || category?.id === p.categoryId) && (p.slug === parts[2] || p.aliases?.includes(parts[2]))),
           ) || null,
       };
     return { type: "missing" };

@@ -58,8 +58,8 @@ export default function ProductDetail({ product }) {
   return (
     <section className="browse-page product-page">
       <PageMetadata
-        title={`${product.title} - Bulk Enquiries`}
-        description={`${product.title} (${product.num}) from Ayush Aromatics. Request technical specifications, documentation, packaging details and a bulk quotation.`}
+        title={product.seoTitle || `${product.title} - Bulk Enquiries`}
+        description={product.seoDescription || `${product.title} (${product.num}) from Ayush Aromatics. Request technical specifications, documentation, packaging details and a bulk quotation.`}
         breadcrumbs={breadcrumbs}
       />
       <div className="container browse-layout">

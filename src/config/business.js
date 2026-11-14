@@ -1,7 +1,7 @@
 // Defaults verified against ayusharomatics.com on 18 October 2026.
-import { getContactEmails } from "./emails";
-import { getContactPhones, phoneLink } from "./phones";
-const env = import.meta.env;
+import { getContactEmails } from "./emails.js";
+import { getContactPhones, phoneLink } from "./phones.js";
+const env = import.meta.env || {};
 const emails = getContactEmails(env);
 const phones = getContactPhones(env);
 function officialUrl(value) {
@@ -52,12 +52,19 @@ export const business = {
   privacyUrl: officialUrl(env.VITE_PRIVACY_URL),
   termsUrl: officialUrl(env.VITE_TERMS_URL),
 };
-export const phoneHref = phoneLink(business.phone);
-export const emailHref = `mailto:${business.emails.join(",")}`;
+export let phoneHref = phoneLink(business.phone);
+export let emailHref = `mailto:${business.emails.join(",")}`;
+export function applyBusinessSettings(settings) {
+  Object.assign(business, settings);
+  business.email = business.emails[0];
+  business.phone = business.phones[0];
+  phoneHref = phoneLink(business.phone);
+  emailHref = `mailto:${business.emails.join(",")}`;
+}
 export function whatsappHref(
   message = `Hello ${business.name}, I would like to enquire about bulk oils and ingredients.`,
 ) {
-  return `https://wa.me/${business.phone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${(business.whatsappNumber || business.phone).replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
 }
 export function quotePath(product = "") {
   return product

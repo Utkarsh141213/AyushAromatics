@@ -1,0 +1,26 @@
+# Deployment template. Creating this service requires a Render account and a paid plan.
+# The paid Starter plan avoids the free service's idle sleep.
+services:
+  - type: web
+    name: ayush-aromatics-crm
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npm run crm:setup
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24
+      - key: NODE_ENV
+        value: production
+      - key: VITE_CRM_REQUIRED
+        value: "true"
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: ayush_crm
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

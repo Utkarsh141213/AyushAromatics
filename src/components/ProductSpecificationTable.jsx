@@ -11,6 +11,7 @@ export default function ProductSpecificationTable({ product }) {
       label,
       product.content.specifications[key],
     ]),
+    ...Object.entries(product.content.specifications).filter(([key, value]) => value && !specificationFields.some(([k]) => k === key)),
   ];
   return (
     <>

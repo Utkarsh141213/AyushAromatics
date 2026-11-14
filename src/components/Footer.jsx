@@ -41,8 +41,7 @@ export default function Footer() {
           <div className="footer-brand">
             <Brand />
             <p>
-              Essential oils, mint products and aromatic ingredients for your
-              business. Start a conversation about your next bulk requirement.
+              {business.footerText || "Essential oils, mint products and aromatic ingredients for your business. Start a conversation about your next bulk requirement."}
             </p>
             <div className="social-links">
               <SocialLinks />

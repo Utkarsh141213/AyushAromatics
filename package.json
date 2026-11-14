@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "server": "node --env-file-if-exists=.env.local server/index.js",
+    "crm:setup": "node --env-file-if-exists=.env.local server/setup.js",
+    "test:crm": "node --env-file-if-exists=.env.local --test server/*.test.js",
+    "start": "node --env-file-if-exists=.env.local server/index.js",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -13,6 +17,12 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4",
+    "helmet": "^8.3.0",
+    "mongodb": "^7.9.0",
+    "multer": "^2.5.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -26,6 +36,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "gh-pages": "^6.3.0",
-    "globals": "^17.7.0"
+    "globals": "^17.7.0",
+    "playwright-core": "^1.65.1"
   }
 }
