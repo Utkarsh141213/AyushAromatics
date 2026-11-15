@@ -1,0 +1,38 @@
+name: CRM availability check
+
+on:
+  schedule:
+    # Every five minutes, offset from the top of the hour (UTC).
+    - cron: '2-59/5 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: crm-availability
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check CRM and database connectivity
+        env:
+          CRM_HEALTH_URL: https://ayusharomatics.onrender.com/api/health
+        shell: bash
+        run: |
+          curl --fail --silent --show-error \
+            --connect-timeout 15 --max-time 60 \
+            --retry 2 --retry-delay 5 \
+            --output "$RUNNER_TEMP/crm-health.json" \
+            "$CRM_HEALTH_URL"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          response = json.loads((Path(os.environ["RUNNER_TEMP"]) / "crm-health.json").read_text())
+          if response.get("status") != "ok":
+              raise SystemExit("CRM health check failed")
+          print("CRM is reachable and MongoDB connectivity check passed.")
+          PY
