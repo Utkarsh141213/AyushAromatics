@@ -1,6 +1,10 @@
 name: CRM availability check
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/crm-health.yml
   schedule:
     # Every five minutes, offset from the top of the hour (UTC).
     - cron: '2-59/5 * * * *'
