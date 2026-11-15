@@ -30,6 +30,12 @@ Uploads accept JPEG, PNG, WebP or PDF signatures, with a limit of 8 MB per file.
 
 ## Deployment
 
+### Scheduled availability check
+
+`.github/workflows/crm-health.yml` calls `https://ayusharomatics.onrender.com/api/health` every five minutes at minutes 02, 07, 12, etc. It checks for an HTTP success response and JSON `status: ok`; the endpoint also pings MongoDB. It retries transient failures and can be run manually from GitHub Actions. No database or admin secrets are used by the workflow.
+
+GitHub schedules execute only from the repository's default branch (currently `main`), so the workflow must also exist there. CRM source can remain on `feature/mongodb-crm-admin`. Schedules may be delayed, and public-repository schedules can be disabled after 60 days without repository activity. Render's free instance-hour quotas still apply. This is an availability check and does not guarantee uninterrupted uptime or override hosting/database plan policies.
+
 GitHub Pages can continue serving the current static site, but cannot run the CRM backend. To use the live CRM, deploy this repo to a Node host and serve the website and API from the same HTTPS origin. `render.yaml` is a prepared paid Render Starter template; it does not create or purchase a service by itself.
 
 1. Connect the GitHub repository to the host. Set the MongoDB URI as a server secret, `MONGODB_DB_NAME=ayush_crm`, initial `ADMIN_EMAIL`/`ADMIN_PASSWORD`, `NODE_ENV=production`, and `VITE_CRM_REQUIRED=true` **at build time**. The latter prevents showing the old bundled catalogue when the API is unavailable.
